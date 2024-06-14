@@ -4,7 +4,7 @@ const { usersCollection } = require("../mongoDBConfig/collections")
 const saveUser = async (req, res) => {
     const user = req.body
     const result = await usersCollection.insertOne(user)
-    const token = JsonWebTokenError.sign({ user: { email: user.email } }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d' })
+    const token = jwt.sign({ user: { email: user.email } }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '7d' })
     res.json({ result, token })
 }
 
