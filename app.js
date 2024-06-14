@@ -7,8 +7,9 @@ const app = express()
 const port = process.env.PORT || 5000
 
 app.use(cors({
-    origin: 'https://sk-talika.web.app'
-  }))
+    // origin: 'https://sk-talika.web.app'
+    origin: '*'
+}))
 app.use(express.json())
 
 async function run() {
