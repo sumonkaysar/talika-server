@@ -1,5 +1,5 @@
 const { ObjectId } = require("mongodb")
-const { workspacesCollection, tasksCollection } = require("../mongoDBConfig/collections")
+const { workspacesCollection } = require("../mongoDBConfig/collections")
 
 const getUsersAllWorkspaces = async (req, res) => {
     const { email } = req.params

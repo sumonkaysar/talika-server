@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken")
-const { usersCollection } = require("../mongoDBConfig/collections")
+const { usersCollection, workspacesCollection, tasksCollection } = require("../mongoDBConfig/collections")
 
 const saveUser = async (req, res) => {
     const user = req.body
@@ -32,9 +32,53 @@ const updateUser = async (req, res) => {
     res.json(result)
 }
 
+const getDashboardData = async (req, res) => {
+    const { email } = req.params
+    const totalWorkspaces = await workspacesCollection.find({ creatorEmail: email }).toArray()
+    const totalTasks = await tasksCollection.find({ creatorEmail: email }).toArray()
+    const highPriorityTasks = await tasksCollection.find({ creatorEmail: email, priority: "High" }).toArray()
+
+    const tasks = await tasksCollection.aggregate([
+        {
+            $project: {
+                createdTime: 1,
+                _id: 0
+            }
+        }
+    ]).toArray()
+    const yearlyTasks = {};
+    tasks.forEach(task => {
+        const createdTime = new Date(task.createdTime);
+        const year = createdTime.getFullYear();
+        if (!yearlyTasks[year]) {
+            yearlyTasks[year] = {};
+        }
+        const month = createdTime.getMonth() + 1;
+        if (!yearlyTasks[year][month]) {
+            yearlyTasks[year][month] = 0;
+        }
+        yearlyTasks[year][month] += 1;
+    });
+    for (const year in yearlyTasks) {
+        for (let month = 1; month <= 12; month++) {
+            if (!yearlyTasks[year][month]) {
+                yearlyTasks[year][month] = 0;
+            }
+        }
+    }
+
+    res.json({
+        totalWorkspaces: totalWorkspaces.length,
+        totalTasks: totalTasks.length,
+        highPriorityTasks: highPriorityTasks.length,
+        yearlyTasks,
+    })
+}
+
 module.exports = {
     saveUser,
     saveProviderUser,
     getOneUser,
     updateUser,
+    getDashboardData,
 }

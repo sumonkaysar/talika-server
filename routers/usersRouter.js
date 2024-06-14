@@ -1,4 +1,4 @@
-const { saveUser, updateUser, getOneUser, saveProviderUser } = require("../controllers/usersController")
+const { saveUser, updateUser, getOneUser, saveProviderUser, getDashboardData } = require("../controllers/usersController")
 const verifyUser = require("../middlewares/verifyUsers")
 
 const usersRouter = require("express").Router()
@@ -6,6 +6,8 @@ const usersRouter = require("express").Router()
 usersRouter.post("/", saveUser)
 
 usersRouter.post("/provider", saveProviderUser)
+
+usersRouter.get("/dashboard/:email",  getDashboardData)
 
 usersRouter.get("/:email", verifyUser, getOneUser)
 

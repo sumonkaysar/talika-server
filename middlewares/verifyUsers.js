@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken")
 
 
 function verifyUser(req, res, next) {
-    return next();
     const { authorization: authHeader } = req.headers
     if (!authHeader) {
         return res.status(401).send({ status: 401, message: 'Unauthorized access' })
